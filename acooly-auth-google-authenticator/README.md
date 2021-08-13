@@ -1,6 +1,6 @@
 <!-- title: Google身份验证器 -->
 <!-- name: acooly-auth-google-authenticator -->
-<!-- type: auth -->
+<!-- type: app -->
 <!-- author: zhangpu -->
 <!-- date: 2021-08-13 -->
 
