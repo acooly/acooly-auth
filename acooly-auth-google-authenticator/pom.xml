@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.acooly</groupId>
+        <artifactId>acooly-auth-parent</artifactId>
+        <version>5.0.0</version>
+    </parent>
+    <artifactId>acooly-auth-google-authenticator</artifactId>
+    <name>acooly-auth-google-authenticator</name>
+
+    <properties>
+        <deploy.skip>true</deploy.skip>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+        </dependency>
+
+        <!-- 组件：数据库连接池 -->
+<!--        <dependency>-->
+<!--            <groupId>com.acooly</groupId>-->
+<!--            <artifactId>acooly-component-ds</artifactId>-->
+<!--        </dependency>-->
+        <!-- 组件：web及springMvc封装组件 -->
+        <dependency>
+            <groupId>com.acooly</groupId>
+            <artifactId>acooly-component-web</artifactId>
+        </dependency>
+
+
+
+    </dependencies>
+</project>
