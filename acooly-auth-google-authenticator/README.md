@@ -88,7 +88,9 @@ try (ServletOutputStream outputStream = response.getOutputStream()) {
 # 6 changelogs
 
 ## 5.0.0
+
 20210813
+
 * 生成秘钥（20字符的bytes的Base32编码：32长度的字符串）
 * 生成Google身份验证器App可识别的二维码（包含信息：应用，用户标志，秘钥）
 * 提供验证工具方法，支持偏移量（默认为1，表示当前时间段前后各一个30秒时间段兼容验证）
