@@ -85,7 +85,7 @@ try (ServletOutputStream outputStream = response.getOutputStream()) {
 
 注意：该示例只能在非online环境才会启用。
 
-# 6 changelogs
+# 6 changelog
 
 ## 5.0.0
 
