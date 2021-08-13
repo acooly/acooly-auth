@@ -13,9 +13,24 @@
 
     <name>acooly-auth Projects</name>
     <packaging>pom</packaging>
+
     <modules>
         <module>acooly-auth-assemble</module>
         <module>acooly-auth-google-authenticator</module>
         <module>acooly-auth-test</module>
     </modules>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>.</directory>
+                <includes>
+                    <include>*.md</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+    </build>
 </project>
