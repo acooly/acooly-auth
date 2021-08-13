@@ -10,10 +10,6 @@
     <artifactId>acooly-auth-google-authenticator</artifactId>
     <name>acooly-auth-google-authenticator</name>
 
-    <properties>
-        <deploy.skip>true</deploy.skip>
-    </properties>
-
     <dependencies>
 
         <dependency>
