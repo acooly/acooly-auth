@@ -17,6 +17,7 @@
     <modules>
         <module>acooly-auth-assemble</module>
         <module>acooly-auth-google-authenticator</module>
+        <module>acooly-auth-wechat-authenticator</module>
         <module>acooly-auth-test</module>
     </modules>
 
