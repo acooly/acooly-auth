@@ -4,6 +4,7 @@
 <!-- author: cuifuq -->
 <!-- date: 2021-08-13 -->
 <!-- title: 微信接入组件  -->
+
 ## 1. 组件介绍
 
 acooly-auth-wechat-authenticator 以acooly框架为基础, 集成微信公众号认证体系；方便研发团队依赖此组件快速对接微信公众号，微信小程序；
@@ -15,7 +16,7 @@ acooly-auth-wechat-authenticator 以acooly框架为基础, 集成微信公众号
 
 [微信网页授权](https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842)
 
-### 1.1优势
+### 1.1组件优势
 
 * 快速完成微信公众号，微信小程序的对接
 * 简化微信公众号复杂的对接流程
@@ -94,6 +95,9 @@ maven坐标：
 
 ## 3.版本说明
 
+#### 2021-09-24
+
+* 1.微信网页授权登录
 
 #### 2020-09-16
 
