@@ -10,7 +10,7 @@ import org.springframework.boot.SpringApplication;
 @BootApp(sysName = "acooly-auth", httpPort = 8011)
 public class Main {
     public static void main(String[] args) {
-        Apps.setProfileIfNotExists("online");
+        Apps.setProfileIfNotExists("cuifuq");
         new SpringApplication(Main.class).run(args);
     }
 }

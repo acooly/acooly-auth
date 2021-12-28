@@ -40,6 +40,10 @@ public enum WechatWebClientEnum implements Messageable {
 	/** 通过OpenID来获取用户基本信息 */
 	cgi_bin_user_info("/cgi-bin/user/info", "获取用户基本信息（包括UnionID机制）"),
 
+	
+	/** 获取jsapi_ticket **/
+	cgi_bin_ticket("/cgi-bin/ticket/getticket", "获取jsapi_ticket"),
+	
 	;
 
 	private final String code;
