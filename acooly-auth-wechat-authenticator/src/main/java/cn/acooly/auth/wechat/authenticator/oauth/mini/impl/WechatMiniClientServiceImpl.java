@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import com.acooly.core.utils.Dates;
 import com.acooly.core.utils.Ids;
 import com.acooly.core.utils.Strings;
 import com.acooly.core.utils.mapper.JsonMapper;
+import com.acooly.module.distributedlock.DistributedLockFactory;
 import com.acooly.module.ofile.OFileProperties;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -49,8 +51,13 @@ public class WechatMiniClientServiceImpl implements WechatMiniClientService {
 
 	private final String WECHAT_MINI_ACCESS_TOKEN = "wechat_mini_access_token";
 
+	public static Integer REDIS_TRY_LOCK_TIME = 3;
+
 	@Autowired
 	private OFileProperties oFileProperties;
+
+	@Autowired
+	private DistributedLockFactory factory;
 
 	@Override
 	public WechatMiniSession loginAuthVerify(String jsCode) {
@@ -95,38 +102,63 @@ public class WechatMiniClientServiceImpl implements WechatMiniClientService {
 
 	public String getAccessToken() {
 		String accessToken = (String) redisTemplate.opsForValue().get(WECHAT_MINI_ACCESS_TOKEN);
+		if (StringUtils.isNotBlank(accessToken)) {
+			return accessToken;
+		}
 
-		// 重新获取 accessToken
-		if (StringUtils.isBlank(accessToken)) {
-			String openidUrl = wechatProperties.getMiniClient().getApiUrl() + WechatMiniClientEnum.cgi_bin_token.code();
-			Map<String, Object> requestData = Maps.newTreeMap();
-			requestData.put("appid", wechatProperties.getMiniClient().getAppid());
-			requestData.put("secret", wechatProperties.getMiniClient().getSecret());
-			requestData.put("grant_type", "client_credential");
+		String accessTokenLock = WECHAT_MINI_ACCESS_TOKEN + "_lock";
+		Lock lock = factory.newLock(accessTokenLock);
+		try {
 
-			String requestUrl = HttpRequest.append(openidUrl, requestData);
+			log.info("微信小程序[获取access_token]-加锁-start");
+			if (lock.tryLock(REDIS_TRY_LOCK_TIME, TimeUnit.SECONDS)) {
+				accessToken = (String) redisTemplate.opsForValue().get(WECHAT_MINI_ACCESS_TOKEN);
+				// 再次获取缓存accessToken;获取成功后返回
+				if (StringUtils.isNotBlank(accessToken)) {
+					return accessToken;
+				}
 
-			log.info("微信小程序[获取access_token],请求地址:{}", requestUrl);
-			HttpRequest httpRequest = HttpRequest.get(requestUrl).acceptCharset(HttpRequest.CHARSET_UTF8);
-			httpRequest.trustAllCerts();
-			httpRequest.trustAllHosts();
-			int httpCode = httpRequest.code();
-			String resultBody = httpRequest.body(HttpRequest.CHARSET_UTF8);
-			log.info("微信小程序[获取access_token],响应数据:{}", resultBody);
+				// 重新获取 accessToken
+				String openidUrl = wechatProperties.getMiniClient().getApiUrl()
+						+ WechatMiniClientEnum.cgi_bin_token.code();
+				Map<String, Object> requestData = Maps.newTreeMap();
+				requestData.put("appid", wechatProperties.getMiniClient().getAppid());
+				requestData.put("secret", wechatProperties.getMiniClient().getSecret());
+				requestData.put("grant_type", "client_credential");
 
-			JSONObject bodyJson = JSON.parseObject(resultBody);
-			if (httpCode != 200) {
-				log.info("微信小程序获取accessToken失败，" + bodyJson.get("errmsg"));
-				throw new BusinessException(bodyJson.getString("errmsg"), bodyJson.getString("errcode"));
+				String requestUrl = HttpRequest.append(openidUrl, requestData);
+				log.info("微信小程序[获取access_token],请求地址:{}", requestUrl);
+				HttpRequest httpRequest = HttpRequest.get(requestUrl).acceptCharset(HttpRequest.CHARSET_UTF8);
+				httpRequest.trustAllCerts();
+				httpRequest.trustAllHosts();
+				int httpCode = httpRequest.code();
+				String resultBody = httpRequest.body(HttpRequest.CHARSET_UTF8);
+				log.info("微信小程序[获取access_token],响应数据:{}", resultBody);
+
+				JSONObject bodyJson = JSON.parseObject(resultBody);
+				if (httpCode != 200) {
+					log.info("微信小程序获取accessToken失败，" + bodyJson.get("errmsg"));
+					throw new BusinessException(bodyJson.getString("errmsg"), bodyJson.getString("errcode"));
+				}
+				log.info("微信小程序重新获取access_token数据{}", bodyJson);
+				accessToken = setRedisAccessToken(bodyJson);
+
+			} else {
+				log.info("微信小程序[获取access_token]-加锁失败");
 			}
-			log.info("微信小程序重新获取access_token数据{}", bodyJson);
-			accessToken = setRedisAccessToken(bodyJson);
+
+		} catch (Exception e) {
+			log.info("微信小程序[获取access_token]-加锁异常{}", e);
+			throw new BusinessException("获取微信小程序access_token失败,稍后重试");
+		} finally {
+			lock.unlock();
 		}
 		return accessToken;
+
 	}
 
 	/**
-	 * 设置redis，时间过期：微信有效时间-15分钟 ，重新获取
+	 * 设置redis，时间过期：微信有效时间-10分钟 ，重新获取
 	 * 
 	 * @param obj
 	 */
@@ -135,7 +167,7 @@ public class WechatMiniClientServiceImpl implements WechatMiniClientService {
 		log.info("redis设置微信小程序 access_token：{}", obj);
 		String accessToken = obj.getString("access_token");
 		Long expiresIn = obj.getLong("expires_in");
-		redisTemplate.opsForValue().set(WECHAT_MINI_ACCESS_TOKEN, accessToken, (expiresIn - 900), TimeUnit.SECONDS);
+		redisTemplate.opsForValue().set(WECHAT_MINI_ACCESS_TOKEN, accessToken, (expiresIn - 600), TimeUnit.SECONDS);
 		return accessToken;
 	}
 
@@ -256,6 +288,12 @@ public class WechatMiniClientServiceImpl implements WechatMiniClientService {
 		String dayPart = StringUtils.substring(pathTimestamp, 6, 8);
 		String subPath = File.separator + yearPart + File.separator + monthPart + File.separator + dayPart;
 		return subPath;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void cleanAccessToken() {
+		redisTemplate.opsForValue().set(WECHAT_MINI_ACCESS_TOKEN, null);
 	}
 
 }

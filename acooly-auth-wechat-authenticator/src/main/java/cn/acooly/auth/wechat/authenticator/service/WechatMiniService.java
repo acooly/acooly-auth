@@ -11,6 +11,13 @@ public interface WechatMiniService {
 	 * @return
 	 */
 	public String getAccessToken();
+	
+	/**
+	 * 清除 access_token
+	 * 
+	 * @return
+	 */
+	public void cleanAccessToken();
 
 	/**
 	 * 登录凭证校验
@@ -30,4 +37,6 @@ public interface WechatMiniService {
 	 * @return
 	 */
 	public String getMiniProgramImgCode(String scene, String page);
+
+	
 }

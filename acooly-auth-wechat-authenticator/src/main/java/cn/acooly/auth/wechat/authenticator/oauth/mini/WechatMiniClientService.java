@@ -18,6 +18,11 @@ public interface WechatMiniClientService {
 	public String getAccessToken();
 
 	/**
+	 * 清除access_token
+	 */
+	public void cleanAccessToken();
+
+	/**
 	 * 登录凭证校验
 	 * 
 	 * @param jsCode

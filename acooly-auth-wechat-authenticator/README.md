@@ -95,6 +95,12 @@ maven坐标：
 
 ## 3.版本说明
 
+#### 2021-12-29
+
+* 1.新增 jsapi_ticket 获取方案；jsapi_ticket是公众号用于调用微信JS接口的临时票据，有效期7200秒
+* 2.新增boss管理界面，自行配置：/manage/wechat/auth/index.html; 支持人工刷新缓存
+* 3.优化公众号接口access_token，小程序access_token, jsapi_ticket，支持分布式锁机制，有效处理高并发
+
 #### 2021-09-24
 
 * 1.微信网页授权登录

@@ -2,6 +2,7 @@ package cn.acooly.auth.wechat.authenticator.oauth.ticket.impl;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.acooly.core.common.exception.BusinessException;
+import com.acooly.module.distributedlock.DistributedLockFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.kevinsawicki.http.HttpRequest;
@@ -39,37 +41,69 @@ public class WechatTicketClientServiceImpl implements WechatTicketClientService 
 	@Autowired
 	private WechatWebClientBaseService wechatWebClientBaseService;
 
+	@Autowired
+	private DistributedLockFactory factory;
+
 	private final String WECHAT_JSAPI_TICKET = "wechat_web_jsApi_ticket";
+
+	public static Integer REDIS_TRY_LOCK_TIME = 1;
 
 	@Override
 	public String getJsApiTicket() {
+		// 获取缓存的jsapi_ticket
 		String jsApiTicket = (String) redisTemplate.opsForValue().get(WECHAT_JSAPI_TICKET);
+		if (StringUtils.isNotBlank(jsApiTicket)) {
+			return jsApiTicket;
+		}
 
-		// 重新获取 jsApiTicket
-		if (StringUtils.isBlank(jsApiTicket)) {
-			String openidUrl = wechatProperties.getWebClient().getApiUrl() + WechatWebClientEnum.cgi_bin_ticket.code();
-			Map<String, Object> requestData = Maps.newTreeMap();
-			requestData.put("access_token", wechatWebClientBaseService.getAccessToken());
-			requestData.put("type", "jsapi");
-			String requestUrl = HttpRequest.append(openidUrl, requestData);
+		String jsApiKeyLock = WECHAT_JSAPI_TICKET + "_lock";
+		Lock lock = factory.newLock(jsApiKeyLock);
+		try {
+			log.info("微信公众号[获取jsapi_ticket]-加锁-start");
+			if (lock.tryLock(REDIS_TRY_LOCK_TIME, TimeUnit.SECONDS)) {
+				// 获取缓存的jsapi_ticket
+				jsApiTicket = (String) redisTemplate.opsForValue().get(WECHAT_JSAPI_TICKET);
+				// 再次获取缓存jsapi_ticket;获取成功后返回
+				if (StringUtils.isNotBlank(jsApiTicket)) {
+					return jsApiTicket;
+				}
 
-			log.info("微信公众号[获取jsapi_ticket],请求地址:{}", requestUrl);
-			HttpRequest httpRequest = HttpRequest.get(requestUrl).acceptCharset(HttpRequest.CHARSET_UTF8);
-			httpRequest.trustAllCerts();
-			httpRequest.trustAllHosts();
-			int httpCode = httpRequest.code();
-			String resultBody = httpRequest.body(HttpRequest.CHARSET_UTF8);
-			log.info("微信公众号[获取jsapi_ticket],响应数据:{}", resultBody);
+				String openidUrl = wechatProperties.getWebClient().getApiUrl()
+						+ WechatWebClientEnum.cgi_bin_ticket.code();
+				Map<String, Object> requestData = Maps.newTreeMap();
+				requestData.put("access_token", wechatWebClientBaseService.getAccessToken());
+				requestData.put("type", "jsapi");
+				String requestUrl = HttpRequest.append(openidUrl, requestData);
 
-			JSONObject bodyJson = JSON.parseObject(resultBody);
-			if (httpCode != 200) {
-				log.info("微信公众号获取jsapi_ticket失败，" + bodyJson.get("errmsg"));
-				throw new BusinessException(bodyJson.getString("errmsg"), bodyJson.getString("errcode"));
+				log.info("微信公众号[获取jsapi_ticket],请求地址:{}", requestUrl);
+				HttpRequest httpRequest = HttpRequest.get(requestUrl).acceptCharset(HttpRequest.CHARSET_UTF8);
+				httpRequest.trustAllCerts();
+				httpRequest.trustAllHosts();
+				int httpCode = httpRequest.code();
+				String resultBody = httpRequest.body(HttpRequest.CHARSET_UTF8);
+				log.info("微信公众号[获取jsapi_ticket],响应数据:{}", resultBody);
+
+				JSONObject bodyJson = JSON.parseObject(resultBody);
+				if (httpCode != 200) {
+					log.info("微信公众号获取jsapi_ticket失败，" + bodyJson.get("errmsg"));
+					throw new BusinessException(bodyJson.getString("errmsg"), bodyJson.getString("errcode"));
+				}
+				if (bodyJson.get("errcode").equals("40001")) {
+					log.info("微信公众号接口access_token过期,重新刷新access_token");
+					wechatWebClientBaseService.refreshAccessToken();
+				}
+				jsApiTicket = setJsApiTicket(bodyJson);
+			} else {
+				log.info("微信公众号[获取jsapi_ticket]-加锁失败");
 			}
-			log.info("公众号重新获取jsapi_ticket数据{}", bodyJson);
-			jsApiTicket = setJsApiTicket(bodyJson);
+		} catch (Exception e) {
+			log.info("微信公众号[获取jsapi_ticket]-加锁异常", e);
+			throw new BusinessException("获取jsapi_ticket失败,稍后重试");
+		} finally {
+			lock.unlock();
 		}
 		return jsApiTicket;
+
 	}
 
 	@Override

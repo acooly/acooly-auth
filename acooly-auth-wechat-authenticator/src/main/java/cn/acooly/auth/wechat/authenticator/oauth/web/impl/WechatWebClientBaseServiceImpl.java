@@ -3,6 +3,7 @@ package cn.acooly.auth.wechat.authenticator.oauth.web.impl;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.acooly.core.common.exception.BusinessException;
 import com.acooly.core.utils.mapper.JsonMapper;
+import com.acooly.module.distributedlock.DistributedLockFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.esotericsoftware.minlog.Log;
@@ -44,7 +46,12 @@ public class WechatWebClientBaseServiceImpl implements WechatWebClientBaseServic
 	@Autowired
 	private RedisTemplate redisTemplate;
 
+	@Autowired
+	private DistributedLockFactory factory;
+
 	private final String WECHAT_ACCESS_TOKEN = "wechat_web_access_token";
+
+	public static Integer REDIS_TRY_LOCK_TIME = 3;
 
 	@Override
 	public String wechatOauth(String redirectUri) {
@@ -77,34 +84,56 @@ public class WechatWebClientBaseServiceImpl implements WechatWebClientBaseServic
 	@Override
 	public String getAccessToken() {
 		String accessToken = (String) redisTemplate.opsForValue().get(WECHAT_ACCESS_TOKEN);
+		if (StringUtils.isNotBlank(accessToken)) {
+			return accessToken;
+		}
 
-		// 重新获取 accessToken
-		if (StringUtils.isBlank(accessToken)) {
-			String openidUrl = wechatProperties.getWebClient().getApiUrl() + WechatWebClientEnum.cgi_bin_token.code();
-			Map<String, Object> requestData = Maps.newTreeMap();
-			requestData.put("appid", wechatProperties.getWebClient().getAppid());
-			requestData.put("secret", wechatProperties.getWebClient().getSecret());
-			requestData.put("grant_type", "client_credential");
+		String accessTokenLock = WECHAT_ACCESS_TOKEN + "_lock";
+		Lock lock = factory.newLock(accessTokenLock);
+		try {
+			log.info("微信公众号[获取access_token]-加锁-start");
+			if (lock.tryLock(REDIS_TRY_LOCK_TIME, TimeUnit.SECONDS)) {
+				accessToken = (String) redisTemplate.opsForValue().get(WECHAT_ACCESS_TOKEN);
+				// 再次获取缓存accessToken;获取成功后返回
+				if (StringUtils.isNotBlank(accessToken)) {
+					return accessToken;
+				}
 
-			String requestUrl = HttpRequest.append(openidUrl, requestData);
+				// 重新获取 accessToken
+				String openidUrl = wechatProperties.getWebClient().getApiUrl()
+						+ WechatWebClientEnum.cgi_bin_token.code();
+				Map<String, Object> requestData = Maps.newTreeMap();
+				requestData.put("appid", wechatProperties.getWebClient().getAppid());
+				requestData.put("secret", wechatProperties.getWebClient().getSecret());
+				requestData.put("grant_type", "client_credential");
 
-			log.info("微信公众号[获取access_token],请求地址:{}", requestUrl);
-			HttpRequest httpRequest = HttpRequest.get(requestUrl).acceptCharset(HttpRequest.CHARSET_UTF8);
-			httpRequest.trustAllCerts();
-			httpRequest.trustAllHosts();
-			int httpCode = httpRequest.code();
-			String resultBody = httpRequest.body(HttpRequest.CHARSET_UTF8);
-			log.info("微信公众号[获取access_token],响应数据:{}", resultBody);
+				String requestUrl = HttpRequest.append(openidUrl, requestData);
 
-			JSONObject bodyJson = JSON.parseObject(resultBody);
-			if (httpCode != 200) {
-				log.info("微信公众号获取accessToken失败，" + bodyJson.get("errmsg"));
-				throw new BusinessException(bodyJson.getString("errmsg"), bodyJson.getString("errcode"));
+				log.info("微信公众号[获取access_token],请求地址:{}", requestUrl);
+				HttpRequest httpRequest = HttpRequest.get(requestUrl).acceptCharset(HttpRequest.CHARSET_UTF8);
+				httpRequest.trustAllCerts();
+				httpRequest.trustAllHosts();
+				int httpCode = httpRequest.code();
+				String resultBody = httpRequest.body(HttpRequest.CHARSET_UTF8);
+				log.info("微信公众号[获取access_token],响应数据:{}", resultBody);
+
+				JSONObject bodyJson = JSON.parseObject(resultBody);
+				if (httpCode != 200) {
+					log.info("微信公众号获取accessToken失败，" + bodyJson.get("errmsg"));
+					throw new BusinessException(bodyJson.getString("errmsg"), bodyJson.getString("errcode"));
+				}
+				accessToken = setRedisAccessToken(bodyJson);
+			} else {
+				log.info("微信公众号[获取access_token]-加锁失败");
 			}
-			log.info("公众号重新获取access_token数据{}", bodyJson);
-			accessToken = setRedisAccessToken(bodyJson);
+		} catch (Exception e) {
+			log.info("微信公众号[获取access_token]-加锁异常{}", e);
+			throw new BusinessException("获取access_token失败,稍后重试");
+		} finally {
+			lock.unlock();
 		}
 		return accessToken;
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -158,7 +187,8 @@ public class WechatWebClientBaseServiceImpl implements WechatWebClientBaseServic
 
 	}
 
-	private WechatUserInfoDto getUserInfoBase(WechatWebClientEnum WechatWebEnumCode, String openId, String accessToken) {
+	private WechatUserInfoDto getUserInfoBase(WechatWebClientEnum WechatWebEnumCode, String openId,
+			String accessToken) {
 		String openidUrl = wechatProperties.getWebClient().getApiUrl() + WechatWebEnumCode.code();
 		Map<String, Object> requestData = Maps.newTreeMap();
 		requestData.put("openid", openId);

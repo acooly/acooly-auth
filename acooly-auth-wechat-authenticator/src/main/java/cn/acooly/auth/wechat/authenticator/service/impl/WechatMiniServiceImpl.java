@@ -28,4 +28,9 @@ public class WechatMiniServiceImpl implements WechatMiniService {
 		return wechatMiniClientService.getAccessToken();
 	}
 
+	@Override
+	public void cleanAccessToken() {
+		wechatMiniClientService.cleanAccessToken();
+	}
+
 }
