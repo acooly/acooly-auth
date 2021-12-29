@@ -15,9 +15,12 @@ import com.acooly.core.common.dao.support.StandardDatabaseScriptIniter;
 import com.acooly.module.security.config.SecurityAutoConfig;
 import com.google.common.collect.Lists;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author cuifuqiang
  */
+@Slf4j
 @Configuration
 @EnableConfigurationProperties({WechatProperties.class})
 @ConditionalOnProperty(value = PREFIX + ".enable", matchIfMissing = true)
@@ -28,6 +31,7 @@ public class WechatAutoConfig {
 
 	@Bean
 	public StandardDatabaseScriptIniter wechatScriptIniter() {
+		log.info("加载[acooly-auth-wechat-authenticator]组件。。。。。。");
 		return new StandardDatabaseScriptIniter() {
 
 			@Override
