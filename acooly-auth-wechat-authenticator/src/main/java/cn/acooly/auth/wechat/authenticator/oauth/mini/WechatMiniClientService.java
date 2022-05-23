@@ -15,12 +15,12 @@ public interface WechatMiniClientService {
 	 * 
 	 * @return
 	 */
-	public String getAccessToken();
+	public String getAccessToken(String appId);
 
 	/**
 	 * 清除access_token
 	 */
-	public void cleanAccessToken();
+	public void cleanAccessToken(String appId);
 
 	/**
 	 * 登录凭证校验
@@ -31,7 +31,7 @@ public interface WechatMiniClientService {
 	 * 
 	 * @return
 	 */
-	public WechatMiniSession loginAuthVerify(String jsCode);
+	public WechatMiniSession loginAuthVerify(String appId, String jsCode);
 
 	/**
 	 * 获取小程序码，适用于需要的码数量极多的业务场景。
@@ -46,6 +46,6 @@ public interface WechatMiniClientService {
 	 * @return
 	 */
 
-	public String getMiniProgramImgCode(String scene, String page);
+	public String getMiniProgramImgCode(String appId, String scene, String page);
 
 }

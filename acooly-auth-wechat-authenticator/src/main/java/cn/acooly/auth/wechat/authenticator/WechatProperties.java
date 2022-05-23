@@ -2,7 +2,12 @@ package cn.acooly.auth.wechat.authenticator;
 
 import static cn.acooly.auth.wechat.authenticator.WechatProperties.PREFIX;
 
+import java.util.Map;
+
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import com.google.common.collect.Maps;
 
 import lombok.Data;
 import lombok.Getter;
@@ -92,7 +97,14 @@ public class WechatProperties {
 	}
 
 	/**
-	 * 	网站应用(微信授权登录)
+	 * 设置多个小程序
+	 * <li>Map<appId,secret> ：Map<小程序appid,小程序secret>
+	 * <li>配置文件：acooly.auth.wechat.miniManyClient[小程序appid]=小程序secret
+	 */
+	private Map<String, String> miniManyClient = Maps.newHashMap();
+
+	/**
+	 * 网站应用(微信授权登录)
 	 * 
 	 * @author CuiFuQ
 	 *
@@ -105,7 +117,7 @@ public class WechatProperties {
 
 		/** 微信公众号授权地址：https://open.weixin.qq.com/connect/qrconnect */
 		private String oauthUrl = "https://open.weixin.qq.com/connect/qrconnect";
-		
+
 		/** 微信授权登陆api地址 **/
 		private String apiUrl = "https://api.weixin.qq.com";
 
@@ -114,19 +126,32 @@ public class WechatProperties {
 
 		/** 网站应用的secret */
 		private String secret;
-		
+
 		/** 授权后重定向的回调链接地址， 请使用 urlEncode 对链接进行处理 */
 		private String redirectUri;
 
 		/** 返回类型，请填写code */
 		private String responseType = "code";
 
-		/** 网页授权作用域*/
+		/** 网页授权作用域 */
 		private String scope = "snsapi_login";
 
 		/** 重定向后会带上state参数 **/
 		private String state = "STATE";
 
+	}
+
+	/**
+	 * 多个小程序-客户端映射关系
+	 * 
+	 * @return
+	 */
+	public Map<String, String> getMiniManyClient() {
+		Map<String, String> miniClients = miniManyClient;
+		if (Strings.isNotBlank(miniClient.getAppid())) {
+			miniClients.put(miniClient.getAppid(), miniClient.getSecret());
+		}
+		return miniClients;
 	}
 
 }

@@ -103,6 +103,17 @@ maven坐标：
 
 ## 3.版本说明
 
+#### 2022-05-23
+
+######  应用场景说明：
+* 1.微信针对小程序的大小有严格限制【整个小程序所有分包大小不超过 12M 单个分包/主包大小不能超过 2M】
+* 2.由于公司产品线的不同，针对不同的产品线研发不同的小程序
+
+###### 更新内容
+* 1.微信小程序：支持多个小程序配置，acooly.auth.wechat.miniManyClient[小程序appid]=小程序secret
+* 2.公众号:支持由商户(使用者)动态配置用户授权方式
+
+
 #### 2022-03-08
 
 * 1.微信小程序-配置说明
@@ -182,6 +193,10 @@ maven坐标：
 - //微信小程序secret
 - acooly.auth.wechat.miniClient.secret=xxxxxxxxxxxxxxxxxx
 
+
+-  //配置多个小程序
+- acooly.auth.wechat.miniManyClient[小程序appid1]=小程序secret1
+- acooly.auth.wechat.miniManyClient[小程序appid2]=小程序secret2
  
 
 ### 4.2.3 网页授权登录 配置说明
@@ -202,7 +217,7 @@ maven坐标：
 
 ### 4.3.1 提供公众号基础功能说明
 
- * 参考 cn.acooly.auth.wechat.authenticator.oauth.web.WechatWebClientService
+ * 参考 cn.acooly.auth.wechat.authenticator.service.WechatWebService
  
 	
 	/**
@@ -214,8 +229,6 @@ maven坐标：
 	 */
 	public String getWechatOauthUrl(String redirectUri);
 
-
-
 	/**
 	 * 微信页面确认授权(step 1) 扩展方案，与 getWechatOauthUrl(redirectUri)方案相同
 	 * 
@@ -226,9 +239,7 @@ maven坐标：
 	 * @return
 	 */
 	public String getWechatOauthUrl(String redirectUri, String scope, String state);
-
-
-
+	
 	/**
 	 * 微信页面确认授权(step 2)
 	 * https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html#3
@@ -241,63 +252,67 @@ maven坐标：
 	
 	
 ### 4.3.2 提供微信小程序基础功能说明
-- 参考 cn.acooly.auth.wechat.authenticator.oauth.mini.WechatMiniClientService
+- 参考 cn.acooly.auth.wechat.authenticator.service.WechatMiniService
 
-		/**
-		 * 获取小程序全局唯一后台接口调用凭据（access_token）
-		 * 
-		 * @return
-		 */
-		public String getAccessToken();
+##### 多个小程序客户端支持
+- 参考 cn.acooly.auth.wechat.authenticator.services.WechatMiniManyService
+
+
+	/**
+	 * 获取小程序全局唯一后台接口调用凭据（access_token）
+	 * 
+	 * @return
+	 */
+	public String getAccessToken();
 	
-		/**
-		 * 登录凭证校验
-		 * 
-		 * @param jsCode
-		 *               <li>调用接口获取登录凭证（code）
-		 *               <li>详情参考 wx.login(Object object)
-		 * 
-		 * @return
-		 */
-		public WechatMiniSession loginAuthVerify(String jsCode);
-	
-		/**
-		 * 获取小程序码，适用于需要的码数量极多的业务场景。
-		 * 
-		 * @param scene
-		 *              <li>
-		 *              最大32个可见字符，只支持数字，大小写英文以及部分特殊字符：!#$&'()*+,/:;=?@-._~，其它字符请自行编码为合法字符（因不支持%，中文无法使用
-		 *              urlencode 处理，请使用其他编码方式）
-		 * @param page
-		 *              <li>必须是已经发布的小程序存在的页面（否则报错），例如 pages/index/index, 根路径前不要填加
-		 *              /,不能携带参数（参数请放在scene字段里），如果不填写这个字段，默认跳主页面
-		 * @return
-		 */
-	
-		public String getMiniProgramImgCode(String scene, String page);
+	/**
+	 * 清除 access_token
+	 * 
+	 * @return
+	 */
+	public void cleanAccessToken();
+
+	/**
+	 * 登录凭证校验
+	 * 
+	 * @param jsCode
+	 *               <li>调用接口获取登录凭证（code）
+	 *               <li>详情参考 wx.login(Object object)
+	 * 
+	 * @return
+	 */
+	public WechatMiniSession loginAuthVerify(String jsCode);
+
+	/**
+	 * 获取小程序码，适用于需要的码数量极多的业务场景。
+	 * 
+	 * 
+	 * @return
+	 */
+	public String getMiniProgramImgCode(String scene, String page);
 
 ### 4.3.2 网站应用微信登录功能说明
-- 参考 cn.acooly.auth.wechat.authenticator.oauth.login.WechatWebLoginClientService
+- 参考cn.acooly.auth.wechat.authenticator.service.WechatWebLoginService
 				
-		/**
-		 * 第一步：请求CODE
-		 * 
-		 * <li>第三方使用网站应用授权登录前请注意已获取相应网页授权作用域（scope=snsapi_login），则可以通过在PC端打开以下链接：
-		 * <li>https://open.weixin.qq.com/connect/qrconnect?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect
-		 * <li>若提示“该链接无法访问”，请检查参数是否填写错误，如redirect_uri的域名与审核时填写的授权域名不一致或scope不为snsapi_login。
-		 * 
-		 * @return
-		 */
-		public String wechatWebLoginOauth(String redirectUri);
-	
-		/**
-		 * 第二步：使用微信回调跳转参数 code；换取用户的基本信息（openId，unionid）等
-		 * <li>https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
-		 * 
-		 * @param code 用户授权成功后，微信回调跳转参数 code
-		 * @return
-		 */
-		public WechatWebLoginInfoDto getOpenIdAndUnionid(HttpServletRequest request, HttpServletResponse response);
+	/**
+	 * 第一步：请求CODE
+	 * 
+	 * <li>第三方使用网站应用授权登录前请注意已获取相应网页授权作用域（scope=snsapi_login），则可以通过在PC端打开以下链接：
+	 * <li>https://open.weixin.qq.com/connect/qrconnect?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect
+	 * <li>若提示“该链接无法访问”，请检查参数是否填写错误，如redirect_uri的域名与审核时填写的授权域名不一致或scope不为snsapi_login。
+	 * 
+	 * @return
+	 */
+	public String wechatWebLoginOauth(String redirectUri);
+
+	/**
+	 * 第二步：通过code获取access_token
+	 * <li>https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
+	 * 
+	 * @param code 用户授权成功后，微信回调跳转参数 code
+	 * @return
+	 */
+	public WechatWebLoginInfoDto getOpenIdAndUnionid(HttpServletRequest request, HttpServletResponse response);
 
 
 	

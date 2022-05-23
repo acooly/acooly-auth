@@ -51,18 +51,23 @@
 		<th>开发平台:</th>
 		<td>https://developers.weixin.qq.com/miniprogram/dev/api-backend</td>
 	</tr>
-	<tr>
-		<th>appid:</th>
-		<td>${miniClient.appid}</td>
-	</tr>	
-	<tr>
-		<th>小程序接口<br/>access_token:</th>
-		<td>${miniAccessToken}
-		<br/>
-		   <a href="#" class="easyui-linkbutton" plain="true" onclick="refresh_access_token('mini_access_token')"><i class="fa fa-refresh fa-lg fa-fw fa-col"></i>刷新access_token</a>
-		<br/>
-		access_token的有效期目前为2个小时</td>
-	</tr>				
+	<#list miniManyClient! as map>
+	    <#list map?keys as keystr>
+			<tr>
+				<th>appid:</th>
+				<td>${keystr}</td>
+			</tr>	
+			<tr>
+				<th>小程序接口<br/>access_token:</th>
+				<td>${map[keystr]}
+				<br/>
+				   <a href="#" class="easyui-linkbutton" plain="true" onclick="refresh_access_token('mini_access_token@${keystr}')"><i class="fa fa-refresh fa-lg fa-fw fa-col"></i>刷新access_token</a>
+				<br/>
+				access_token的有效期目前为2个小时</td>
+			</tr>
+	    </#list>
+	</#list>
+					
 </table>
 
 <br/>

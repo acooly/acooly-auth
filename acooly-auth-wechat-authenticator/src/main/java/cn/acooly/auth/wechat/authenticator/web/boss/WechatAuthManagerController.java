@@ -1,5 +1,8 @@
 package cn.acooly.auth.wechat.authenticator.web.boss;
 
+import java.util.Map;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,6 +23,7 @@ import cn.acooly.auth.wechat.authenticator.WechatProperties;
 import cn.acooly.auth.wechat.authenticator.service.WechatJsApiService;
 import cn.acooly.auth.wechat.authenticator.service.WechatMiniService;
 import cn.acooly.auth.wechat.authenticator.service.WechatWebTokenService;
+import cn.acooly.auth.wechat.authenticator.services.WechatMiniManyService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -42,6 +46,9 @@ public class WechatAuthManagerController<T extends Entityable, M extends EntityS
 	private WechatMiniService wechatMiniService;
 
 	@Autowired
+	private WechatMiniManyService wechatMiniManyService;
+
+	@Autowired
 	private WechatJsApiService wechatJsApiService;
 
 	@Autowired
@@ -53,6 +60,15 @@ public class WechatAuthManagerController<T extends Entityable, M extends EntityS
 		model.addAttribute("webClient", wchatProperties.getWebClient());
 		// 小程序
 		model.addAttribute("miniClient", wchatProperties.getMiniClient());
+
+		// 多个小程序客户端
+		Map<String, String> miniManyClient = wchatProperties.getMiniManyClient();
+		Set<String> miniKeys = miniManyClient.keySet();
+		for (String appId : miniKeys) {
+			miniManyClient.put(appId, wechatMiniManyService.getAccessToken(appId));
+		}
+		model.addAttribute("miniManyClient", miniManyClient);
+
 		// 网站应用(微信授权登录)
 		model.addAttribute("webLoginClient", wchatProperties.getWebLoginClient());
 
@@ -83,8 +99,10 @@ public class WechatAuthManagerController<T extends Entityable, M extends EntityS
 			if (refreshKey.equals("web_access_token")) {
 				wechatWebTokenService.refreshAccessToken();
 			}
-			if (refreshKey.equals("mini_access_token")) {
-				wechatMiniService.cleanAccessToken();
+
+			if (refreshKey.contains("mini_access_token")) {
+				String appId = refreshKey.split("@")[1];
+				wechatMiniManyService.cleanAccessToken(appId);
 			}
 			if (refreshKey.equals("jsapi_ticket")) {
 				wechatJsApiService.cleanJsApiTicket();
