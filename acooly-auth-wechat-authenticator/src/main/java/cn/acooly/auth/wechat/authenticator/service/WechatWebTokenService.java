@@ -37,6 +37,7 @@ public interface WechatWebTokenService {
 	/**
 	 * 获取用户用户基本信息
 	 * <li>已经关注了公众号，并且已经授权
+	 * https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html#UinonId
 	 * 
 	 * @param openId
 	 * @return

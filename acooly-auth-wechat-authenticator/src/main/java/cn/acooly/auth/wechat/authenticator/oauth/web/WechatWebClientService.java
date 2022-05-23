@@ -18,7 +18,7 @@ public interface WechatWebClientService {
 	 * 
 	 * @return
 	 */
-	public String getWechatOauthUrl(String redirectUri);
+	public String getWechatOauthUrl(String redirectUri, String scope, String state);
 
 	/**
 	 * 微信页面确认授权(step 2)
@@ -26,6 +26,5 @@ public interface WechatWebClientService {
 	 * @return
 	 */
 	public WechatUserInfoDto getWechatUserInfo(HttpServletRequest request, HttpServletResponse response);
-
 
 }

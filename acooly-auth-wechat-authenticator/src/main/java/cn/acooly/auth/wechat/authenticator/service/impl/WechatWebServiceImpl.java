@@ -18,7 +18,12 @@ public class WechatWebServiceImpl implements WechatWebService {
 
 	@Override
 	public String getWechatOauthUrl(String redirectUri) {
-		return wechatWebClientService.getWechatOauthUrl(redirectUri);
+		return wechatWebClientService.getWechatOauthUrl(redirectUri, null, null);
+	}
+
+	@Override
+	public String getWechatOauthUrl(String redirectUri, String scope, String state) {
+		return wechatWebClientService.getWechatOauthUrl(redirectUri, scope, state);
 	}
 
 	@Override

@@ -46,7 +46,7 @@ public class WechatTicketClientServiceImpl implements WechatTicketClientService 
 
 	private final String WECHAT_JSAPI_TICKET = "wechat_web_jsApi_ticket";
 
-	public static Integer REDIS_TRY_LOCK_TIME = 1;
+	public static Integer REDIS_TRY_LOCK_TIME = 3;
 
 	@Override
 	public String getJsApiTicket() {
@@ -112,11 +112,16 @@ public class WechatTicketClientServiceImpl implements WechatTicketClientService 
 
 	}
 
+	/**
+	 *  提前10分钟过期
+	 * @param bodyJson
+	 * @return
+	 */
 	private String setJsApiTicket(JSONObject bodyJson) {
 		log.info("redis设置微信公众号 jsapi_ticket：{}", bodyJson);
 		String jsApiTicket = bodyJson.getString("ticket");
 		Long expiresIn = bodyJson.getLong("expires_in");
-		redisTemplate.opsForValue().set(WECHAT_JSAPI_TICKET, jsApiTicket, (expiresIn - 900), TimeUnit.SECONDS);
+		redisTemplate.opsForValue().set(WECHAT_JSAPI_TICKET, jsApiTicket, (expiresIn - 600), TimeUnit.SECONDS);
 		return jsApiTicket;
 	}
 

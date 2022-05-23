@@ -32,10 +32,10 @@ public class WechatWebClientServiceImpl implements WechatWebClientService {
 	private WechatWebClientBaseService wechatWebClientBaseService;
 
 	@Override
-	public String getWechatOauthUrl(String redirectUri) {
+	public String getWechatOauthUrl(String redirectUri, String scope, String state) {
 		// 检查微信开关
 		checkWechatEnable();
-		return wechatWebClientBaseService.wechatOauth(redirectUri);
+		return wechatWebClientBaseService.wechatOauth(redirectUri, scope, state);
 	}
 
 	@Override

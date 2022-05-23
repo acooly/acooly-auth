@@ -54,24 +54,42 @@ public class WechatWebClientBaseServiceImpl implements WechatWebClientBaseServic
 	public static Integer REDIS_TRY_LOCK_TIME = 3;
 
 	@Override
-	public String wechatOauth(String redirectUri) {
+	public String wechatOauth(String redirectUri, String scope, String state) {
 		StringBuffer wechatUrl = new StringBuffer();
 		try {
 			wechatUrl.append(wechatProperties.getWebClient().getOauthUrl());
 			wechatUrl.append("?appid=");
 			wechatUrl.append(wechatProperties.getWebClient().getAppid());
+
+			// 授权后重定向的回调链接地址， 请使用 urlEncode 对链接进行处理
 			wechatUrl.append("&redirect_uri=");
 			if (StringUtils.isNotBlank(redirectUri)) {
 				wechatUrl.append(redirectUri);
 			} else {
 				wechatUrl.append(URLEncoder.encode(wechatProperties.getWebClient().getRedirectUri(), "utf-8"));
 			}
+
+			// 返回类型，请填写code
 			wechatUrl.append("&response_type=");
 			wechatUrl.append(wechatProperties.getWebClient().getResponseType());
+
+			// 应用授权作用域
 			wechatUrl.append("&scope=");
-			wechatUrl.append(wechatProperties.getWebClient().getScope());
+			if (StringUtils.isNotBlank(scope)) {
+				wechatUrl.append(scope);
+			} else {
+				wechatUrl.append(wechatProperties.getWebClient().getScope());
+			}
+
+			// 重定向后会带上state参数
 			wechatUrl.append("&state=");
-			wechatUrl.append(wechatProperties.getWebClient().getState());
+			if (StringUtils.isNotBlank(state)) {
+				wechatUrl.append(state);
+			} else {
+				wechatUrl.append(wechatProperties.getWebClient().getState());
+			}
+
+			// 无论直接打开还是做页面302重定向时候，必须带此参数
 			wechatUrl.append("#wechat_redirect");
 		} catch (Exception e) {
 			Log.info("微信组件开关：已关闭");
@@ -184,7 +202,6 @@ public class WechatWebClientBaseServiceImpl implements WechatWebClientBaseServic
 	@Override
 	public WechatUserInfoDto getUserInfoByOpenId(String openId) {
 		return getUserInfoBase(WechatWebClientEnum.cgi_bin_user_info, openId, getAccessToken());
-
 	}
 
 	private WechatUserInfoDto getUserInfoBase(WechatWebClientEnum WechatWebEnumCode, String openId,

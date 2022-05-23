@@ -24,7 +24,7 @@ public interface WechatWebClientBaseService {
 	 * 
 	 * @return
 	 */
-	public String wechatOauth(String redirectUri);
+	public String wechatOauth(String redirectUri, String scope, String state);
 
 	/**
 	 * 第二步：通过code换取网页授权access_token

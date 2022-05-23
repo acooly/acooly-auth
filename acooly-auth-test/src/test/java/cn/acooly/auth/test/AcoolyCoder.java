@@ -25,7 +25,7 @@ public class AcoolyCoder {
     // 配置表名转换为实体名时，需要忽略的表前缀。例如配置：p_ 则表示p_customer(表名) -> Customer(实体类名)
     static String TABLE_IGNOR_PREFIX = "acooly_";
     // 生成代码的表
-    static String[] TABLES = {"acooly_coder_customer"};
+    static String[] TABLES = {"agent_agent_info"};
 
     /**
      * 代码方式配置关键参数

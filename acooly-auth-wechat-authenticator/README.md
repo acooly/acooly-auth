@@ -51,11 +51,11 @@ maven坐标：
 ### 2.2 微信公众号对接操作说明
 
 * step 1: 登录微信公众号平台 [网址](https://mp.weixin.qq.com/?token=&lang=zh_CN)
-* step 2： 左边菜单，首页-->开发-->基本配置-->公众号开发信息
+* step 2： 左边菜单，首页-->设置与开发-->基本配置-->公众号开发信息
 * step 3: 启用-开发者密码(AppSecret) 并保存对应的AppSecret
 * step 4: 设置IP白名单, 配置服务器出口IP 
 * step 5: 设置-服务器配置，URL：服务器回调地址（/wechat/webApi/callback.html）；Token；EncodingAESKey（随机生成）；消息加解密方式 [参考](https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421135319)
-* step 6: 左边菜单，首页-->设置与开发-->公众号设置-->功能设置-->网页授权域名（1.将“微信授权文件”存在工程static目录；2.重启工程）
+* step 6: 左边菜单，首页-->设置与开发-->公众号设置-->功能设置-->[业务域名] 和 [网页授权域名]（1.将“微信授权文件”存在工程static目录；2.重启工程）
 * step 7: 左边菜单，首页-->内容与互动-->内容工具-->自定义菜单  组件默认访问地址 （ /wechat/webApi/index.html）
 * step 8: 左边菜单，首页-->设置与开发-->公众号设置-->帐号详情-->二维码，关注公众号，即可正常访问授权
 
@@ -64,6 +64,14 @@ maven坐标：
 ### 2.3 微信小程序对接操作说明
 
 * step 1: 登录凭证校验 cn.acooly.auth.wechat.authenticator.oauth.mini.WechatMiniClientService#loginAuthVerify
+
+#### 2.3.1 微信小程序对接操作说明
+
+* step 1: 登录微信公众号平台 [网址](https://mp.weixin.qq.com/?token=&lang=zh_CN)
+* step 2： 左边菜单，首页-->开发-->开发管理-->开发设置 ：开启 [AppSecret(小程序密钥)],并保存对应的AppSecret
+* step 3: 左边菜单，首页-->开发-->开发管理-->开发设置 ：服务器域名 --->设置【配置服务器信息】
+* step 4: 左边菜单，首页-->开发-->开发管理-->开发设置 :  开启:消息推送(可选)；扫普通链接二维码打开小程序（必选）；
+
 
 
 ### 2.4 网站应用微信登录说明
@@ -94,6 +102,12 @@ maven坐标：
 
 
 ## 3.版本说明
+
+#### 2022-03-08
+
+* 1.微信小程序-配置说明
+* 2.公众号,小程序unionid同步方案； 提前公众号（取消关注，未关注），小程序内嵌公众号首页，通过服务端绑定公众号的unionid
+
 
 #### 2021-12-29
 
@@ -190,19 +204,38 @@ maven坐标：
 
  * 参考 cn.acooly.auth.wechat.authenticator.oauth.web.WechatWebClientService
  
-		/**
-		 * 微信页面确认授权(step 1)
-		 * 
-		 * @return
-		 */
-		public String getWechatOauthUrl(String redirectUri);
 	
-		/**
-		 * 微信页面确认授权(step 2)
-		 * 
-		 * @return
-		 */
-		public WechatUserInfoDto getWechatUserInfo(HttpServletRequest request, HttpServletResponse response);
+	/**
+	 * 微信页面确认授权(step 1)
+	 * 
+	 * <li>redirectUri: 授权后重定向的回调链接地址， 请使用 urlEncode 对链接进行处理
+	 * 
+	 * @return
+	 */
+	public String getWechatOauthUrl(String redirectUri);
+
+
+
+	/**
+	 * 微信页面确认授权(step 1) 扩展方案，与 getWechatOauthUrl(redirectUri)方案相同
+	 * 
+	 * @param redirectUri  <li>授权后重定向的回调链接地址， 请使用 urlEncode 对链接进行处理 scope
+	 * @param scope  <li>snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid），snsapi_userinfo （弹出授权页面，可通过openid拿到昵称、性别、所在地。并且， 即使在未关注的情况下，只要用户授权，也能获取其信息）
+	 * @param state <li> 重定向后会带上state参数，开发者可以填写a-zA-Z0-9的参数值，最多128字节
+	 * 
+	 * @return
+	 */
+	public String getWechatOauthUrl(String redirectUri, String scope, String state);
+
+
+
+	/**
+	 * 微信页面确认授权(step 2)
+	 * https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html#3
+	 * 
+	 * @return
+	 */
+	public WechatUserInfoDto getWechatUserInfo(HttpServletRequest request, HttpServletResponse response);
 	
 	
 	
