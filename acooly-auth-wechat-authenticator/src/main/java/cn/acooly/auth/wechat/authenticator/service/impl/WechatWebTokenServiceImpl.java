@@ -1,12 +1,11 @@
 package cn.acooly.auth.wechat.authenticator.service.impl;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import cn.acooly.auth.wechat.authenticator.oauth.web.WechatWebClientBaseService;
 import cn.acooly.auth.wechat.authenticator.oauth.web.dto.WechatUserInfoDto;
 import cn.acooly.auth.wechat.authenticator.service.WechatWebTokenService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("wechatWebTokenService")
 public class WechatWebTokenServiceImpl implements WechatWebTokenService {

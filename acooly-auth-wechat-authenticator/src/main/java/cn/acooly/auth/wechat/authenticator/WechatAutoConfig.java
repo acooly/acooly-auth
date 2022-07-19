@@ -1,9 +1,9 @@
 package cn.acooly.auth.wechat.authenticator;
 
-import static cn.acooly.auth.wechat.authenticator.WechatProperties.PREFIX;
-
-import java.util.List;
-
+import com.acooly.core.common.dao.support.StandardDatabaseScriptIniter;
+import com.acooly.module.security.config.SecurityAutoConfig;
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -11,11 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import com.acooly.core.common.dao.support.StandardDatabaseScriptIniter;
-import com.acooly.module.security.config.SecurityAutoConfig;
-import com.google.common.collect.Lists;
+import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
+import static cn.acooly.auth.wechat.authenticator.WechatProperties.PREFIX;
 
 /**
  * @author cuifuqiang

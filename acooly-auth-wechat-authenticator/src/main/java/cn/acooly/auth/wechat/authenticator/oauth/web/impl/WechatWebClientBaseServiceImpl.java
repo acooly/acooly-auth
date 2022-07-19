@@ -1,18 +1,10 @@
 package cn.acooly.auth.wechat.authenticator.oauth.web.impl;
 
-import java.net.URLEncoder;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-
+import cn.acooly.auth.wechat.authenticator.WechatProperties;
+import cn.acooly.auth.wechat.authenticator.oauth.web.WechatWebClientBaseService;
+import cn.acooly.auth.wechat.authenticator.oauth.web.dto.WechatOpenIdDto;
+import cn.acooly.auth.wechat.authenticator.oauth.web.dto.WechatUserInfoDto;
+import cn.acooly.auth.wechat.authenticator.oauth.web.enums.WechatWebClientEnum;
 import com.acooly.core.common.exception.BusinessException;
 import com.acooly.core.utils.mapper.JsonMapper;
 import com.acooly.module.distributedlock.DistributedLockFactory;
@@ -21,13 +13,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.esotericsoftware.minlog.Log;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.common.collect.Maps;
-
-import cn.acooly.auth.wechat.authenticator.WechatProperties;
-import cn.acooly.auth.wechat.authenticator.oauth.web.WechatWebClientBaseService;
-import cn.acooly.auth.wechat.authenticator.oauth.web.dto.WechatOpenIdDto;
-import cn.acooly.auth.wechat.authenticator.oauth.web.dto.WechatUserInfoDto;
-import cn.acooly.auth.wechat.authenticator.oauth.web.enums.WechatWebClientEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 /**
  * 微信网页授权

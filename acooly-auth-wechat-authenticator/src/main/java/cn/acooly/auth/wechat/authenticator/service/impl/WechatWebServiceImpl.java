@@ -1,14 +1,13 @@
 package cn.acooly.auth.wechat.authenticator.service.impl;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import cn.acooly.auth.wechat.authenticator.oauth.web.WechatWebClientService;
 import cn.acooly.auth.wechat.authenticator.oauth.web.dto.WechatUserInfoDto;
 import cn.acooly.auth.wechat.authenticator.service.WechatWebService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Service("wechatWebService")
 public class WechatWebServiceImpl implements WechatWebService {

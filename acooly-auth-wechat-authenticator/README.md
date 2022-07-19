@@ -103,6 +103,32 @@ maven坐标：
 
 ## 3.版本说明
 
+#### 2022-07-18
+
+###### 文件存储设置：
+* 1.新增配置项 acooly.auth.wechat.obsFileBucketName 文件存储-桶名称（如：微信小程序码 文件存储）
+* 2.新增批量获取小程序码；单次300个
+
+###### 性能测试： MacbookPro 14[2021];  M1 pro（10核 16GB）
+* 本地存储：线程数量：40,预生成数量:40,实际生成数量:40,用时：1.756 s
+* 云存储：线程数量：40,预生成数量:40,实际生成数量:40,用时：2.341 s
+
+
+* 本地存储：线程数量：50,预生成数量:50,实际生成数量:50,用时：1.112 s
+* 云存储：线程数量：50,预生成数量:50,实际生成数量:50,用时：2.474 s
+
+
+* 本地存储：线程数量：20,预生成数量:100,实际生成数量:100,用时：3.761 s
+* 云存储：线程数量：20,预生成数量:100,实际生成数量:100,用时：5.017 s
+
+
+* 本地存储：线程数量：40,预生成数量:200,实际生成数量:200,用时：3.904 s
+* 云存储：线程数量：40,预生成数量:200,实际生成数量:200,用时：5.481 s
+
+
+* 本地存储：线程数量：60,预生成数量:300,实际生成数量:300,用时：3.93 s
+* 云存储：线程数量：60,预生成数量:300,实际生成数量:300,用时：7.336 s
+
 #### 2022-05-23
 
 ######  应用场景说明：
@@ -164,11 +190,13 @@ maven坐标：
 
 ### 4.2.1微信公众号 配置说明
 
-*  //组件开关 
+* //组件开关 
 * acooly.auth.wechat.enable=true
+* //此组件文件存储-桶名称（如：微信小程序码 文件存储）重要说明：微信文件的BucketName 仅支持"公共读" 
+* acooly.auth.wechat.obsFileBucketName=null
 * //微信openapi请求地址(已默认)
 * acooly.auth.wechat.webClient.apiUrl=https://api.weixin.qq.com
-*  //微信公众号的appid 详情 step 3
+* //微信公众号的appid 详情 step 3
 * acooly.auth.wechat.webClient.appid=xxxxxxxxxxx
 * //微信公众号的secret 详情 step 3
 * acooly.auth.wechat.webClient.secret=xxxxxxxxxxxxxxxxxxxxxx
@@ -177,7 +205,7 @@ maven坐标：
 * acooly.auth.wechat.webClient.scope=snsapi_userinfo
 * // 令牌(Token)  详情 step 5
 * acooly.auth.wechat.webClient.serverToken=HelloWorld
-*  //微信授权后跳转业务系统地址(URL);可以参考 cn.acooly.auth.wechat.authenticator.web.portal.WechatWebApiControl#backRedirect
+* //微信授权后跳转业务系统地址(URL);可以参考 cn.acooly.auth.wechat.authenticator.web.portal.WechatWebApiControl#backRedirect
 * acooly.auth.wechat.webClient.redirectUri=http://www.xxx.com/wechat/webApi/backRedirect.html
 * // 微信重定向后会带上state参数
 * acooly.auth.wechat.webClient.state=hello,world

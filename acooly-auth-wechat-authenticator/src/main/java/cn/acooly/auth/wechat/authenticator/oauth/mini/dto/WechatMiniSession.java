@@ -1,10 +1,9 @@
 package cn.acooly.auth.wechat.authenticator.oauth.mini.dto;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
+
+import java.io.Serializable;
 
 @Data
 public class WechatMiniSession implements Serializable {

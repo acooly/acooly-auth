@@ -1,9 +1,9 @@
 package cn.acooly.auth.wechat.authenticator.oauth.login;
 
+import cn.acooly.auth.wechat.authenticator.oauth.login.dto.WechatWebLoginInfoDto;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import cn.acooly.auth.wechat.authenticator.oauth.login.dto.WechatWebLoginInfoDto;
 
 /**
  * 网站应用微信登录开发

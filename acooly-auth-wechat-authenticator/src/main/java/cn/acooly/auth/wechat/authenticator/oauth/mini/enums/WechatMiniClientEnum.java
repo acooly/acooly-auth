@@ -7,12 +7,12 @@
  */
 package cn.acooly.auth.wechat.authenticator.oauth.mini.enums;
 
+import com.acooly.core.utils.enums.Messageable;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.acooly.core.utils.enums.Messageable;
 
 /**
  * 微信接口 枚举类

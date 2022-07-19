@@ -1,8 +1,7 @@
 package cn.acooly.auth.wechat.authenticator;
 
-import org.springframework.context.ConfigurableApplicationContext;
-
 import com.acooly.core.common.boot.component.ComponentInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * @author cuifuqiang

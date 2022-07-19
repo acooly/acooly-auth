@@ -1,11 +1,10 @@
 package cn.acooly.auth.wechat.authenticator.web.portal;
 
-import java.security.MessageDigest;
-import java.util.Arrays;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import cn.acooly.auth.wechat.authenticator.WechatProperties;
+import cn.acooly.auth.wechat.authenticator.oauth.web.dto.WechatUserInfoDto;
+import cn.acooly.auth.wechat.authenticator.service.WechatWebService;
+import cn.acooly.auth.wechat.authenticator.service.WechatWebTokenService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +13,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cn.acooly.auth.wechat.authenticator.WechatProperties;
-import cn.acooly.auth.wechat.authenticator.oauth.web.dto.WechatUserInfoDto;
-import cn.acooly.auth.wechat.authenticator.service.WechatWebService;
-import cn.acooly.auth.wechat.authenticator.service.WechatWebTokenService;
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.security.MessageDigest;
+import java.util.Arrays;
 
 @Slf4j
 @Controller

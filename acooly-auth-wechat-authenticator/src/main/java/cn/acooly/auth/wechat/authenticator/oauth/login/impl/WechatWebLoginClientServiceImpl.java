@@ -1,17 +1,9 @@
 package cn.acooly.auth.wechat.authenticator.oauth.login.impl;
 
-import java.net.URLEncoder;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-
+import cn.acooly.auth.wechat.authenticator.WechatProperties;
+import cn.acooly.auth.wechat.authenticator.oauth.login.WechatWebLoginClientService;
+import cn.acooly.auth.wechat.authenticator.oauth.login.dto.WechatWebLoginInfoDto;
+import cn.acooly.auth.wechat.authenticator.oauth.login.enums.WechatWebLoginClientEnum;
 import com.acooly.core.common.exception.BusinessException;
 import com.acooly.core.utils.mapper.JsonMapper;
 import com.alibaba.fastjson.JSON;
@@ -19,12 +11,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.esotericsoftware.minlog.Log;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.common.collect.Maps;
-
-import cn.acooly.auth.wechat.authenticator.WechatProperties;
-import cn.acooly.auth.wechat.authenticator.oauth.login.WechatWebLoginClientService;
-import cn.acooly.auth.wechat.authenticator.oauth.login.dto.WechatWebLoginInfoDto;
-import cn.acooly.auth.wechat.authenticator.oauth.login.enums.WechatWebLoginClientEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 网站应用微信登录开发

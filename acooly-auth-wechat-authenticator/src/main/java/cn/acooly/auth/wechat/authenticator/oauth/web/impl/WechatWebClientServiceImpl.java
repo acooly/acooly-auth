@@ -1,19 +1,17 @@
 package cn.acooly.auth.wechat.authenticator.oauth.web.impl;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.acooly.core.common.exception.BusinessException;
-
 import cn.acooly.auth.wechat.authenticator.WechatProperties;
 import cn.acooly.auth.wechat.authenticator.oauth.web.WechatWebClientBaseService;
 import cn.acooly.auth.wechat.authenticator.oauth.web.WechatWebClientService;
 import cn.acooly.auth.wechat.authenticator.oauth.web.dto.WechatOpenIdDto;
 import cn.acooly.auth.wechat.authenticator.oauth.web.dto.WechatUserInfoDto;
+import com.acooly.core.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 微信网页授权

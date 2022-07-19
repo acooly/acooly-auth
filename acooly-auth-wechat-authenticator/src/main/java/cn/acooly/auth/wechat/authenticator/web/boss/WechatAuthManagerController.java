@@ -1,11 +1,16 @@
 package cn.acooly.auth.wechat.authenticator.web.boss;
 
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import cn.acooly.auth.wechat.authenticator.WechatProperties;
+import cn.acooly.auth.wechat.authenticator.service.WechatJsApiService;
+import cn.acooly.auth.wechat.authenticator.service.WechatMiniService;
+import cn.acooly.auth.wechat.authenticator.service.WechatWebTokenService;
+import cn.acooly.auth.wechat.authenticator.services.WechatMiniManyService;
+import com.acooly.core.common.domain.Entityable;
+import com.acooly.core.common.service.EntityService;
+import com.acooly.core.common.web.AbstractJsonEntityController;
+import com.acooly.core.common.web.support.JsonResult;
+import com.acooly.module.security.domain.User;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,18 +18,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.acooly.core.common.domain.Entityable;
-import com.acooly.core.common.service.EntityService;
-import com.acooly.core.common.web.AbstractJsonEntityController;
-import com.acooly.core.common.web.support.JsonResult;
-import com.acooly.module.security.domain.User;
-
-import cn.acooly.auth.wechat.authenticator.WechatProperties;
-import cn.acooly.auth.wechat.authenticator.service.WechatJsApiService;
-import cn.acooly.auth.wechat.authenticator.service.WechatMiniService;
-import cn.acooly.auth.wechat.authenticator.service.WechatWebTokenService;
-import cn.acooly.auth.wechat.authenticator.services.WechatMiniManyService;
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 微信组件管理

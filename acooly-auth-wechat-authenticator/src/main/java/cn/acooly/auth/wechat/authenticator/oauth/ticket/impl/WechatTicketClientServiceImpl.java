@@ -1,26 +1,24 @@
 package cn.acooly.auth.wechat.authenticator.oauth.ticket.impl;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-
+import cn.acooly.auth.wechat.authenticator.WechatProperties;
+import cn.acooly.auth.wechat.authenticator.oauth.ticket.WechatTicketClientService;
+import cn.acooly.auth.wechat.authenticator.oauth.web.WechatWebClientBaseService;
+import cn.acooly.auth.wechat.authenticator.oauth.web.enums.WechatWebClientEnum;
 import com.acooly.core.common.exception.BusinessException;
 import com.acooly.module.distributedlock.DistributedLockFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.common.collect.Maps;
-
-import cn.acooly.auth.wechat.authenticator.WechatProperties;
-import cn.acooly.auth.wechat.authenticator.oauth.ticket.WechatTicketClientService;
-import cn.acooly.auth.wechat.authenticator.oauth.web.WechatWebClientBaseService;
-import cn.acooly.auth.wechat.authenticator.oauth.web.enums.WechatWebClientEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 /**
  * 获取jsapi_ticket

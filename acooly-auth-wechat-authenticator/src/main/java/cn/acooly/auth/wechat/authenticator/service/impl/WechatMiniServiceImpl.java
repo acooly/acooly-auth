@@ -1,12 +1,11 @@
 package cn.acooly.auth.wechat.authenticator.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import cn.acooly.auth.wechat.authenticator.WechatProperties;
 import cn.acooly.auth.wechat.authenticator.oauth.mini.WechatMiniClientService;
 import cn.acooly.auth.wechat.authenticator.oauth.mini.dto.WechatMiniSession;
 import cn.acooly.auth.wechat.authenticator.service.WechatMiniService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("wechatMiniService")
 public class WechatMiniServiceImpl implements WechatMiniService {

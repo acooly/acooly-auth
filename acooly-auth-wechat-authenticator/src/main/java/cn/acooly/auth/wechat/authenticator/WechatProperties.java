@@ -1,17 +1,15 @@
 package cn.acooly.auth.wechat.authenticator;
 
-import static cn.acooly.auth.wechat.authenticator.WechatProperties.PREFIX;
-
-import java.util.Map;
-
-import org.apache.logging.log4j.util.Strings;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import com.google.common.collect.Maps;
-
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.Map;
+
+import static cn.acooly.auth.wechat.authenticator.WechatProperties.PREFIX;
 
 /**
  * @author cuifuq
@@ -23,6 +21,16 @@ public class WechatProperties {
 	public static final String PREFIX = "acooly.auth.wechat";
 
 	private Boolean enable = true;
+
+	/**
+	 * 此组件文件存储-桶名称（如：微信小程序码 文件存储）
+	 *
+	 *  <li>此配置开关 依赖：acooly.ofile.storageType=OBS</li>
+	 * 	<li>obs默认名称；参考：acooly.obs.aliyun.bucketName</li>
+	 * 	<li>重要说明：微信文件的BucketName 仅支持"公共读" </li>
+	 *
+	 */
+	private String obsFileBucketName;
 
 	/**
 	 * 公众号
