@@ -79,8 +79,9 @@ public class WechatMiniApiTestController {
 
 
         List<WechatMiniProgramCodeDto> wechatMiniProgramCodeDtoList = Lists.newArrayList();
-        for (int i = 0; i <15; i++) {
-            wechatMiniProgramCodeDtoList.add(new WechatMiniProgramCodeDto("wx856bdf8cb330bd5d", "0" + i, "pages/index"));
+        for (int i = 0; i <500; i++) {
+            //wechatMiniProgramCodeDtoList.add(new WechatMiniProgramCodeDto(null,"wx856bdf8cb330bd5d", "0" + i, "pages/index2"));
+            wechatMiniProgramCodeDtoList.add(new WechatMiniProgramCodeDto(null,"wx856bdf8cb330bd5d", "0" + i, "pages/index2",false,"develop"));
         }
         Map<String, String> imgs = wechatMiniManyService.getBatchMiniProgramImgCode(wechatMiniProgramCodeDtoList);
 

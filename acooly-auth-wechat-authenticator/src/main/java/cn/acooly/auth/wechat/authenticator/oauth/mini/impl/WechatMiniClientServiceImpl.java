@@ -4,6 +4,7 @@ import cn.acooly.auth.wechat.authenticator.WechatProperties;
 import cn.acooly.auth.wechat.authenticator.oauth.mini.WechatMiniClientService;
 import cn.acooly.auth.wechat.authenticator.oauth.mini.dto.WechatMiniSession;
 import cn.acooly.auth.wechat.authenticator.oauth.mini.enums.WechatMiniClientEnum;
+import com.acooly.core.common.boot.Env;
 import com.acooly.core.common.exception.BusinessException;
 import com.acooly.core.utils.Dates;
 import com.acooly.core.utils.Ids;
@@ -80,7 +81,7 @@ public class WechatMiniClientServiceImpl implements WechatMiniClientService {
         if (miniManyClient.isEmpty()) {
             miniManyClient = wechatProperties.getMiniManyClient();
         }
-        String miniSecret = miniManyClient.get(appId);
+        String miniSecret = miniManyClient.get(appId).toString();
         if (Strings.isBlank(miniSecret)) {
             throw new BusinessException("没有配置对应的小程序配置,请关注配置文件[acooly.auth.wechat.miniManyClient]");
         }
@@ -196,12 +197,7 @@ public class WechatMiniClientServiceImpl implements WechatMiniClientService {
     }
 
     public String getMiniProgramImgCode(String appId, String scene, String page) {
-        if (Strings.isBlank(scene)) {
-            throw new BusinessException("scene不能为空");
-        }
-        String accessToken = getAccessToken(appId);
-        String imgCodeUrl = getMiniProgramImgCode(appId, accessToken, scene, page, true, "release");
-        return imgCodeUrl;
+        return getMiniProgramImgCode(appId, getAccessToken(appId), scene, page, true, "release");
     }
 
     /**
@@ -213,7 +209,22 @@ public class WechatMiniClientServiceImpl implements WechatMiniClientService {
      * @param envVersion  要打开的小程序版本。正式版为 "release"，体验版为 "trial"，开发版为 "develop"。默认是正式版。
      * @return
      */
-    public String getMiniProgramImgCode(String appId, String accessToken, String scene, String page, boolean checkPath, String envVersion) {
+    public String getMiniProgramImgCode(String accessToken, String appId, String scene, String page, boolean checkPath, String envVersion) {
+        if (Strings.isBlank(scene)) {
+            throw new BusinessException("scene不能为空");
+        }
+
+        //生产环境 默认为 check_path=true；env_version=release；其他环境 自行指定
+        if (Env.getEnv().equals("online")) {
+            accessToken = getAccessToken(appId);
+            checkPath = true;
+            envVersion = "release";
+        }
+
+        if (Strings.isBlank(accessToken)) {
+            accessToken = getAccessToken(appId);
+        }
+
         String imgCodeUrl = null;
         String openidUrl = wechatProperties.getMiniClient().getApiUrl() + WechatMiniClientEnum.wxa_getwxacodeunlimit.code();
         Map<String, Object> requestData = Maps.newTreeMap();

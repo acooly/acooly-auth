@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 
 public class BatchMiniCodeCallableTask implements Callable<Map<String, String>> {
 
+
     private WechatMiniClientService wechatMiniClientService;
 
     /**
@@ -19,10 +20,10 @@ public class BatchMiniCodeCallableTask implements Callable<Map<String, String>> 
     private List<WechatMiniProgramCodeDto> wechatMiniProgramCodeDtoList;
 
 
-    public BatchMiniCodeCallableTask(WechatMiniClientService wechatMiniClientService, List<WechatMiniProgramCodeDto> wechatMiniProgramCodeDtoList){
+    public BatchMiniCodeCallableTask( WechatMiniClientService wechatMiniClientService, List<WechatMiniProgramCodeDto> wechatMiniProgramCodeDtoList) {
         super();
-        this.wechatMiniClientService=wechatMiniClientService;
-        this.wechatMiniProgramCodeDtoList=wechatMiniProgramCodeDtoList;
+        this.wechatMiniClientService = wechatMiniClientService;
+        this.wechatMiniProgramCodeDtoList = wechatMiniProgramCodeDtoList;
     }
 
     /**
@@ -34,9 +35,9 @@ public class BatchMiniCodeCallableTask implements Callable<Map<String, String>> 
     @Override
     public Map<String, String> call() throws Exception {
         HashMap<String, String> returnMapData = Maps.newHashMap();
-        for (WechatMiniProgramCodeDto dto:wechatMiniProgramCodeDtoList) {
-            String url=wechatMiniClientService.getMiniProgramImgCode(dto.getAppId(),dto.getScene(),dto.getPage());
-            returnMapData.put(dto.getScene(),url);
+        for (WechatMiniProgramCodeDto dto : wechatMiniProgramCodeDtoList) {
+            String url = wechatMiniClientService.getMiniProgramImgCode(dto.getAccessToken(), dto.getAppId(), dto.getScene(), dto.getPage(), dto.isCheckPath(), dto.getEnvVersion());
+            returnMapData.put(dto.getScene(), url);
         }
         return returnMapData;
     }

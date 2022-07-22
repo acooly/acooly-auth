@@ -32,11 +32,22 @@ public interface WechatMiniManyService {
     public WechatMiniSession loginAuthVerify(String appId, String jsCode);
 
     /**
-     * 获取小程序码，适用于需要的码数量极多的业务场景。
+     * 获取小程序码，适用于需要的码数量极多的业务场景。(仅生产环境)
+     * <p>
+     * 功能相同：String getMiniProgramImgCode(WechatMiniProgramCodeDto wechatMiniProgramCodeDto)
      *
      * @return
      */
     public String getMiniProgramImgCode(String appId, String scene, String page);
+
+    /**
+     * 获取小程序码，适用于需要的码数量极多的业务场景。(支持生产环境或者其他环境)
+     * <p>
+     * 功能相同：String getMiniProgramImgCode(String appId, String scene, String page)
+     *
+     * @return
+     */
+    public String getMiniProgramImgCode(WechatMiniProgramCodeDto wechatMiniProgramCodeDto);
 
     /**
      * 批量获取小程序码，适用于需要的码数量极多的业务场景。
@@ -46,13 +57,5 @@ public interface WechatMiniManyService {
      */
     public Map<String, String> getBatchMiniProgramImgCode(List<WechatMiniProgramCodeDto> wechatMiniProgramCodeDtoList);
 
-
-    /**
-     * 此接口不能在online环境使用；
-     * 获取小程序码，适用于需要的码数量极多的业务场景。
-     *
-     * @return
-     */
-    public String getMiniProgramImgCodeByTest(String appId, String accessToken, String scene, String page, boolean checkPath, String envVersion);
 
 }

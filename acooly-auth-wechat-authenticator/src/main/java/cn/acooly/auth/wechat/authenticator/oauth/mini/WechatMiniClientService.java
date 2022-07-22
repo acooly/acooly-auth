@@ -44,7 +44,7 @@ public interface WechatMiniClientService {
     public String getMiniProgramImgCode(String appId, String scene, String page);
 
     /**
-     * 不建议直接调用，请使用
+     * 不建议直接调用，请使用 public String getMiniProgramImgCode(String appId, String scene, String page);
      *
      * @param appId       小程序的唯一标识
      * @param accessToken 接口调用凭证，该参数为 URL 参数
@@ -54,6 +54,6 @@ public interface WechatMiniClientService {
      * @param envVersion  要打开的小程序版本。正式版为 "release"，体验版为 "trial"，开发版为 "develop"。默认是正式版。
      * @return
      */
-    public String getMiniProgramImgCode(String appId, String accessToken, String scene, String page, boolean checkPath, String envVersion);
+    public String getMiniProgramImgCode(String accessToken, String appId, String scene, String page, boolean checkPath, String envVersion);
 
 }

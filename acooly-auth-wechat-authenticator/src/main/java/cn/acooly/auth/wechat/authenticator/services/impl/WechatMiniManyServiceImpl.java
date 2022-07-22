@@ -47,17 +47,32 @@ public class WechatMiniManyServiceImpl implements WechatMiniManyService {
     }
 
     /**
+     * 获取小程序码，适用于需要的码数量极多的业务场景。
+     * <p>
+     * 功能相同：String getMiniProgramImgCode(String appId, String scene, String page)
+     *
+     * @param dto
+     * @return
+     */
+    @Override
+    public String getMiniProgramImgCode(WechatMiniProgramCodeDto dto) {
+        return wechatMiniClientService.getMiniProgramImgCode(dto.getAccessToken(),dto.getAppId(),dto.getScene(),dto.getPage(),dto.isCheckPath(),dto.getEnvVersion());
+    }
+
+
+    /**
      * 批量获取小程序码，适用于需要的码数量极多的业务场景。
      *
      * @param wechatMiniProgramCodeDtoList
      * @return Map<scene, 访问路径>
      */
-    @Override
+
     public Map<String, String> getBatchMiniProgramImgCode(List<WechatMiniProgramCodeDto> wechatMiniProgramCodeDtoList) {
+        Map<String, String> miniImgUrl = Maps.newHashMap();
         long time = System.currentTimeMillis();
         int miniCodeSize = wechatMiniProgramCodeDtoList.size();
-        if (miniCodeSize > 300) {
-            throw new BusinessException("微信小程序[批量获取小程序码]单次不能操作300数量");
+        if (miniCodeSize > 500) {
+            throw new BusinessException("微信小程序[批量获取小程序码]单次不能操作500数量");
         }
 
         //线程池大小，最大控制在100个
@@ -71,7 +86,6 @@ public class WechatMiniManyServiceImpl implements WechatMiniManyService {
         ExecutorService taskExecutor = Executors.newFixedThreadPool(nThreads);
 
 
-        Map<String, String> miniImgUrl = Maps.newHashMap();
         List<Future<Map<String, String>>> futures = new CopyOnWriteArrayList<>();
 
         //线程-并发执行
@@ -95,26 +109,6 @@ public class WechatMiniManyServiceImpl implements WechatMiniManyService {
         log.info("微信小程序[批量获取小程序码]结果，线程数量：{},预生成数量:{},实际生成数量:{},用时：{} s", nThreads, miniCodeSize, miniImgUrl.keySet().size(), (time / 1000.00));
 
         return miniImgUrl;
-    }
-
-    /**
-     * 此接口不能在online环境使用；
-     * 获取小程序码，适用于需要的码数量极多的业务场景。
-     *
-     * @param appId
-     * @param accessToken
-     * @param scene
-     * @param page
-     * @param checkPath
-     * @param envVersion
-     * @return
-     */
-    @Override
-    public String getMiniProgramImgCodeByTest(String appId, String accessToken, String scene, String page, boolean checkPath, String envVersion) {
-        if (Env.getEnv().equals("online")) {
-            throw new BusinessException("微信小程序：此方法不支持online环境，请使用 WechatMiniManyService#getMiniProgramImgCode");
-        }
-        return wechatMiniClientService.getMiniProgramImgCode(appId, accessToken, scene, page, checkPath, envVersion);
     }
 
 
