@@ -197,7 +197,7 @@ public class WechatMiniClientServiceImpl implements WechatMiniClientService {
     }
 
     public String getMiniProgramImgCode(String appId, String scene, String page) {
-        return getMiniProgramImgCode(appId, getAccessToken(appId), scene, page, true, "release");
+        return getMiniProgramImgCode(null, appId, scene, page, true, "release");
     }
 
     /**
