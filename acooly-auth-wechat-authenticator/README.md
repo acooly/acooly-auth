@@ -16,6 +16,12 @@ acooly-auth-wechat-authenticator 以acooly框架为基础, 集成微信公众号
 
 [微信网页授权](https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842)
 
+
+## [BOSS]微信授权信息 
+
+##### （非默认配置）/manage/wechat/auth/index.html
+
+
 ### 1.1组件优势
 
 * 快速完成微信公众号，微信小程序的对接
