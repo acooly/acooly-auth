@@ -26,6 +26,7 @@ public class WechatWebApiController {
 	@Autowired
 	private WechatWebService wechatWebService;
 
+	@Autowired
 	private WechatWebTokenService wechatWebTokenService;
 
 	@Autowired
