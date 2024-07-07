@@ -5,11 +5,11 @@
     <parent>
         <artifactId>acooly-app-parent</artifactId>
         <groupId>com.acooly</groupId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.2.0-SNAPSHOT</version>
     </parent>
     <groupId>cn.acooly</groupId>
     <artifactId>acooly-auth-parent</artifactId>
-    <version>5.0.0</version>
+    <version>5.2.0-SNAPSHOT</version>
 
     <name>acooly-auth Projects</name>
     <packaging>pom</packaging>
